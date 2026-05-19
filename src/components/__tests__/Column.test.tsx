@@ -25,6 +25,7 @@ describe('Column Component', () => {
         items={[]}
         onDelete={vi.fn()}
         onDragStart={vi.fn()}
+        onDropOnCard={vi.fn()}
       />
     )
 
@@ -40,6 +41,7 @@ describe('Column Component', () => {
         items={mockItems}
         onDelete={vi.fn()}
         onDragStart={vi.fn()}
+        onDropOnCard={vi.fn()}
       />
     )
 
@@ -56,6 +58,7 @@ describe('Column Component', () => {
         items={[]}
         onDelete={vi.fn()}
         onDragStart={vi.fn()}
+        onDropOnCard={vi.fn()}
       />
     )
 
@@ -71,6 +74,7 @@ describe('Column Component', () => {
         items={[]}
         onDelete={vi.fn()}
         onDragStart={vi.fn()}
+        onDropOnCard={vi.fn()}
       />
     )
 
