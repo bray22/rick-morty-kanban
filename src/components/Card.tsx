@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { KanbanItem } from '../types';
 
 interface CardProps {
@@ -7,34 +8,84 @@ interface CardProps {
 }
 
 export function Card({ item, onDelete, onDragStart }: CardProps) {
+  const [hovered, setHovered] = useState(false);
+  const [deleteHovered, setDeleteHovered] = useState(false);
+
   return (
     <div
       draggable
       onDragStart={() => onDragStart(item)}
-      className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/95 p-5 shadow-[0_18px_60px_-30px_rgba(15,23,42,0.9)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_68px_-28px_rgba(56,189,248,0.35)]"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setDeleteHovered(false); }}
+      style={{
+        background: '#fff',
+        borderRadius: 12,
+        padding: '14px 16px',
+        boxShadow: hovered
+          ? '0 4px 16px rgba(32,33,36,0.15), 0 1px 4px rgba(32,33,36,0.08)'
+          : '0 1px 3px rgba(32,33,36,0.1), 0 1px 2px rgba(32,33,36,0.06)',
+        transform: hovered ? 'translateY(-2px)' : 'none',
+        transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+        cursor: 'grab',
+        userSelect: 'none',
+      }}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 via-violet-500 to-fuchsia-500"></div>
-      <div className="flex gap-3">
+      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
         <img
           src={item.character.image}
           alt={item.character.name}
-          className="w-14 h-14 rounded-full object-cover border border-white/10 shadow-sm"
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            objectFit: 'cover',
+            flexShrink: 0,
+            border: '2px solid #E8EAED',
+          }}
         />
-        <div className="flex-1">
-          <h3 className="font-semibold text-sm text-slate-100 leading-5 break-words">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            margin: '0 0 4px',
+            fontSize: 14,
+            fontWeight: 500,
+            color: '#202124',
+            lineHeight: 1.4,
+            wordBreak: 'break-word',
+          }}>
             {item.title}
-          </h3>
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-500 mt-2">
+          </p>
+          <p style={{
+            margin: 0,
+            fontSize: 12,
+            color: '#5F6368',
+            letterSpacing: '0.01em',
+          }}>
             {item.character.name}
           </p>
         </div>
       </div>
+
       <button
         type="button"
         onClick={() => onDelete(item.id)}
-        className="mt-5 w-full rounded-full border border-rose-500/20 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-200 transition hover:border-rose-400/40 hover:bg-rose-500/15"
+        onMouseEnter={() => setDeleteHovered(true)}
+        onMouseLeave={() => setDeleteHovered(false)}
+        style={{
+          marginTop: 12,
+          width: '100%',
+          padding: '7px 0',
+          borderRadius: 8,
+          border: deleteHovered ? '1px solid #D93025' : '1px solid #DADCE0',
+          background: deleteHovered ? '#FFF1F0' : 'transparent',
+          color: deleteHovered ? '#D93025' : '#80868B',
+          fontSize: 12,
+          fontWeight: 500,
+          cursor: 'pointer',
+          transition: 'all 0.15s ease',
+          letterSpacing: '0.01em',
+        }}
       >
-        Delete item
+        Remove
       </button>
     </div>
   );

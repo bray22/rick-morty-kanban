@@ -3,16 +3,18 @@ import { render, screen } from '@testing-library/react'
 import { Column } from '../Column'
 import type { KanbanItem } from '../../types'
 
-const mockItem: KanbanItem = {
-  id: '1',
-  title: 'Test Task',
-  characterId: 'char1',
-  character: {
-    id: 'char1',
-    name: 'Rick',
-    image: 'https://example.com/rick.jpg',
+const mockItems: KanbanItem[] = [
+  {
+    id: '1',
+    title: 'Test Task',
+    characterId: 'char1',
+    character: {
+      id: 'char1',
+      name: 'Rick',
+      image: 'https://example.com/rick.jpg',
+    },
   },
-}
+]
 
 describe('Column Component', () => {
   it('should render empty state when no items', () => {
@@ -26,8 +28,8 @@ describe('Column Component', () => {
       />
     )
 
-    expect(screen.getByText('To Do')).toBeInTheDocument()
-    expect(screen.getByText('No items yet')).toBeInTheDocument()
+    expect(screen.getByText('Drop items here')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
   })
 
   it('should render items', () => {
@@ -35,7 +37,7 @@ describe('Column Component', () => {
       <Column
         id="todo"
         title="To Do"
-        items={[mockItem]}
+        items={mockItems}
         onDelete={vi.fn()}
         onDragStart={vi.fn()}
       />
@@ -43,9 +45,10 @@ describe('Column Component', () => {
 
     expect(screen.getByText('Test Task')).toBeInTheDocument()
     expect(screen.getByText('Rick')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
   })
 
-  it('should render green title for Done column', () => {
+  it('should render Done column title and icon', () => {
     render(
       <Column
         id="done"
@@ -56,11 +59,11 @@ describe('Column Component', () => {
       />
     )
 
-    const title = screen.getByText('Done')
-    expect(title).toHaveClass('text-emerald-300')
+    expect(screen.getByText('Done')).toBeInTheDocument()
+    expect(screen.getByText('●')).toBeInTheDocument()
   })
 
-  it('should render gray title for non-Done columns', () => {
+  it('should render To Do column title and icon', () => {
     render(
       <Column
         id="todo"
@@ -71,7 +74,7 @@ describe('Column Component', () => {
       />
     )
 
-    const title = screen.getByText('To Do')
-    expect(title).toHaveClass('text-slate-100')
+    expect(screen.getByText('To Do')).toBeInTheDocument()
+    expect(screen.getByText('○')).toBeInTheDocument()
   })
 })

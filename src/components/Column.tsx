@@ -7,30 +7,96 @@ interface ColumnProps {
   items: KanbanItem[];
   onDelete: (itemId: string) => void;
   onDragStart: (payload: { item: KanbanItem; fromColumn: ColumnId }) => void;
+  isDragOver?: boolean;
 }
 
-export function Column({ id, title, items, onDelete, onDragStart }: ColumnProps) {
-  const isDone = id === 'done';
+const COLUMN_CONFIG: Record<ColumnId, { accent: string; chipBg: string; chipColor: string; icon: string }> = {
+  todo: {
+    accent: '#4285F4',
+    chipBg: '#E8F0FE',
+    chipColor: '#1A73E8',
+    icon: '○',
+  },
+  doing: {
+    accent: '#F9AB00',
+    chipBg: '#FEF7E0',
+    chipColor: '#B06000',
+    icon: '◑',
+  },
+  done: {
+    accent: '#34A853',
+    chipBg: '#E6F4EA',
+    chipColor: '#137333',
+    icon: '●',
+  },
+};
+
+export function Column({ id, title, items, onDelete, onDragStart, isDragOver }: ColumnProps) {
+  const cfg = COLUMN_CONFIG[id];
 
   return (
-    <div className="flex-1 bg-slate-900/75 border border-white/10 rounded-[2rem] p-5 h-[600px] flex flex-col shadow-xl shadow-slate-950/20 backdrop-blur-sm">
-      <div className="flex items-center justify-between gap-3 mb-5">
-        <div>
-          <h2 className={`font-semibold text-lg ${isDone ? 'text-emerald-300' : 'text-slate-100'}`}>
+    <div style={{
+      background: isDragOver ? '#F1F3F4' : '#F8F9FA',
+      borderRadius: 16,
+      padding: 16,
+      minHeight: 520,
+      display: 'flex',
+      flexDirection: 'column',
+      border: isDragOver ? `2px solid ${cfg.accent}` : '2px solid transparent',
+      transition: 'border-color 0.15s ease, background 0.15s ease',
+    }}>
+      {/* Column header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 16,
+        paddingBottom: 14,
+        borderBottom: `2px solid ${cfg.accent}`,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 16, color: cfg.accent, lineHeight: 1 }}>{cfg.icon}</span>
+          <h2 style={{
+            margin: 0,
+            fontSize: 15,
+            fontWeight: 600,
+            color: '#202124',
+            letterSpacing: '-0.01em',
+          }}>
             {title}
           </h2>
-          <p className="text-xs uppercase tracking-[0.25em] text-slate-500 mt-1">
-            {items.length} {items.length === 1 ? 'item' : 'items'}
-          </p>
         </div>
-        <div className={`rounded-full px-3 py-1 text-[11px] font-semibold ${isDone ? 'bg-emerald-500/15 text-emerald-200' : 'bg-slate-800/80 text-slate-300'}`}>
-          {isDone ? 'Completed' : 'In progress'}
-        </div>
+        <span style={{
+          background: cfg.chipBg,
+          color: cfg.chipColor,
+          fontSize: 12,
+          fontWeight: 600,
+          padding: '3px 10px',
+          borderRadius: 12,
+          minWidth: 24,
+          textAlign: 'center',
+        }}>
+          {items.length}
+        </span>
       </div>
-      <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+
+      {/* Cards */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
         {items.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-slate-700/80 bg-slate-950/50 p-8 text-center text-slate-500 text-sm">
-            No items yet
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px dashed #DADCE0',
+            borderRadius: 12,
+            padding: '32px 16px',
+            color: '#9AA0A6',
+            fontSize: 13,
+            textAlign: 'center',
+            minHeight: 120,
+          }}>
+            Drop items here
           </div>
         ) : (
           items.map((item) => (

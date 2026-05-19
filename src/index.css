@@ -1,47 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@400;500&display=swap');
 
-:root {
-  color-scheme: dark;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  min-height: 100%;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-  min-height: 100%;
   margin: 0;
-  background-color: #020617;
-  background-image:
-    radial-gradient(circle at top, rgba(56,189,248,0.16), transparent 28%),
-    radial-gradient(circle at 20% 10%, rgba(168,85,247,0.17), transparent 22%),
-    radial-gradient(circle at 85% 20%, rgba(16,185,129,0.12), transparent 18%),
-    linear-gradient(180deg, #020617 0%, #090b13 100%);
-  color: #e2e8f0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Google Sans', 'Roboto', -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: #F8F9FA;
+  color: #202124;
 }
 
-button,
-input,
-select {
-  font: inherit;
-}
+[draggable="true"] { cursor: grab; }
+[draggable="true"]:active { cursor: grabbing; }
 
-[draggable="true"] {
-  cursor: grab;
-}
-
-[draggable="true"]:active {
-  cursor: grabbing;
-}
-
+input, select, button { font-family: inherit; }
