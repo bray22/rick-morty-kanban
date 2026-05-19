@@ -8,7 +8,10 @@ interface ColumnProps {
   onDelete: (itemId: string) => void;
   onDragStart: (payload: { item: KanbanItem; fromColumn: ColumnId }) => void;
   isDragOver?: boolean;
+  onDropOnCard: (toColumn: ColumnId, targetItemId: string) => void;
 }
+
+
 
 const COLUMN_CONFIG: Record<ColumnId, { accent: string; chipBg: string; chipColor: string; icon: string }> = {
   todo: {
@@ -31,7 +34,15 @@ const COLUMN_CONFIG: Record<ColumnId, { accent: string; chipBg: string; chipColo
   },
 };
 
-export function Column({ id, title, items, onDelete, onDragStart, isDragOver }: ColumnProps) {
+export function Column({
+  id,
+  title,
+  items,
+  onDelete,
+  onDragStart,
+  isDragOver,
+  onDropOnCard,
+}: ColumnProps) {
   const cfg = COLUMN_CONFIG[id];
 
   return (
@@ -100,12 +111,13 @@ export function Column({ id, title, items, onDelete, onDragStart, isDragOver }: 
           </div>
         ) : (
           items.map((item) => (
-            <Card
-              key={item.id}
-              item={item}
-              onDelete={onDelete}
-              onDragStart={(item) => onDragStart({ item, fromColumn: id })}
-            />
+           <Card
+            key={item.id}
+            item={item}
+            onDelete={onDelete}
+            onDragStart={(item) => onDragStart({ item, fromColumn: id })}
+            onDropOnCard={(targetItemId) => onDropOnCard(id, targetItemId)}
+          />
           ))
         )}
       </div>

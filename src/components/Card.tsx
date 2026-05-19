@@ -1,19 +1,29 @@
 import { useState } from 'react';
 import type { KanbanItem } from '../types';
 
+// interface CardProps {
+//   item: KanbanItem;
+//   onDelete: (itemId: string) => void;
+//   onDragStart: (item: KanbanItem) => void;
+// }
 interface CardProps {
-  item: KanbanItem;
-  onDelete: (itemId: string) => void;
-  onDragStart: (item: KanbanItem) => void;
+  item: KanbanItem
+  onDelete: (itemId: string) => void
+  onDragStart: (item: KanbanItem) => void
+  onDropOnCard: (targetItemId: string) => void
 }
-
-export function Card({ item, onDelete, onDragStart }: CardProps) {
+export function Card({ item, onDelete, onDragStart, onDropOnCard }: CardProps) {
   const [hovered, setHovered] = useState(false);
   const [deleteHovered, setDeleteHovered] = useState(false);
 
   return (
     <div
       draggable
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+      e.stopPropagation()
+      onDropOnCard(item.id)
+      }}
       onDragStart={() => onDragStart(item)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setDeleteHovered(false); }}

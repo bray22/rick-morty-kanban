@@ -37,8 +37,18 @@ export default function App() {
   const handleCreateItem = (title: string, characterId: string) => {
     const character = characters.find((c) => c.id === characterId);
     if (!character) return;
-    const newItem: KanbanItem = { id: `item-${Date.now()}`, title, characterId, character };
-    setBoard((prev) => ({ ...prev, todo: [newItem, ...prev.todo] }));
+
+    const newItem: KanbanItem = {
+      id: `item-${Date.now()}`,
+      title,
+      characterId,
+      character,
+    };
+
+    setBoard((prev) => ({
+      ...prev,
+      todo: [newItem, ...prev.todo],
+    }));
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -54,21 +64,68 @@ export default function App() {
     setDragOverColumn(colId);
   };
 
+  const triggerConfettiIfDone = (toColumn: ColumnId, fromColumn: ColumnId) => {
+    if (toColumn === 'done' && fromColumn !== 'done') {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3500);
+    }
+  };
+
   const handleDrop = (toColumn: ColumnId) => {
     if (!draggedItem) return;
+
     const { item, fromColumn } = draggedItem;
+
     if (fromColumn !== toColumn) {
       setBoard((prev) => {
         const next = { ...prev };
+
         next[fromColumn] = next[fromColumn].filter((i) => i.id !== item.id);
         next[toColumn] = [item, ...next[toColumn]];
+
         return next;
       });
-      if (toColumn === 'done') {
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 3500);
-      }
+
+      triggerConfettiIfDone(toColumn, fromColumn);
     }
+
+    setDraggedItem(null);
+    setDragOverColumn(null);
+  };
+
+  const handleDropOnCard = (toColumn: ColumnId, targetItemId: string) => {
+    if (!draggedItem) return;
+
+    const { item, fromColumn } = draggedItem;
+
+    if (item.id === targetItemId) {
+      setDraggedItem(null);
+      setDragOverColumn(null);
+      return;
+    }
+
+    setBoard((prev) => {
+      const next = { ...prev };
+
+      next[fromColumn] = next[fromColumn].filter((i) => i.id !== item.id);
+
+      const targetIndex = next[toColumn].findIndex((i) => i.id === targetItemId);
+
+      if (targetIndex === -1) {
+        next[toColumn] = [item, ...next[toColumn]];
+      } else {
+        next[toColumn] = [
+          ...next[toColumn].slice(0, targetIndex),
+          item,
+          ...next[toColumn].slice(targetIndex),
+        ];
+      }
+
+      return next;
+    });
+
+    triggerConfettiIfDone(toColumn, fromColumn);
+
     setDraggedItem(null);
     setDragOverColumn(null);
   };
@@ -78,13 +135,19 @@ export default function App() {
   if (loading) {
     return (
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100vh', background: '#F8F9FA',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#F8F9FA',
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
-            width: 40, height: 40, border: '3px solid #E8EAED',
-            borderTopColor: '#1A73E8', borderRadius: '50%',
+            width: 40,
+            height: 40,
+            border: '3px solid #E8EAED',
+            borderTopColor: '#1A73E8',
+            borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
             margin: '0 auto 16px',
           }} />
@@ -98,13 +161,19 @@ export default function App() {
   if (error) {
     return (
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100vh', background: '#F8F9FA',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#F8F9FA',
       }}>
         <div style={{
-          background: '#fff', borderRadius: 12, padding: '24px 28px',
+          background: '#fff',
+          borderRadius: 12,
+          padding: '24px 28px',
           boxShadow: '0 1px 3px rgba(32,33,36,0.12)',
-          borderLeft: '4px solid #D93025', maxWidth: 400,
+          borderLeft: '4px solid #D93025',
+          maxWidth: 400,
         }}>
           <p style={{ fontWeight: 600, color: '#D93025', margin: '0 0 8px' }}>Failed to load</p>
           <p style={{ color: '#5F6368', fontSize: 14, margin: 0 }}>{error}</p>
@@ -115,9 +184,15 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F8F9FA' }}>
-      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} recycle={false} numberOfPieces={300} />}
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={300}
+        />
+      )}
 
-      {/* Top app bar */}
       <div style={{
         background: '#fff',
         borderBottom: '1px solid #E8EAED',
@@ -133,31 +208,45 @@ export default function App() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
-            width: 32, height: 32, borderRadius: 8,
+            width: 32,
+            height: 32,
+            borderRadius: 8,
             background: '#1A73E8',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             fontSize: 16,
-          }}>🎬</div>
+          }}>
+            🎬
+          </div>
           <div>
             <span style={{ fontSize: 16, fontWeight: 600, color: '#202124' }}>Rick & Morty</span>
             <span style={{ fontSize: 16, fontWeight: 400, color: '#5F6368', marginLeft: 6 }}>Kanban</span>
           </div>
         </div>
 
-        {/* Progress chips */}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          {COLUMNS.map(col => {
+          {COLUMNS.map((col) => {
             const count = board[col.id].length;
             const colors: Record<string, string> = { todo: '#1A73E8', doing: '#F9AB00', done: '#34A853' };
             const bgColors: Record<string, string> = { todo: '#E8F0FE', doing: '#FEF7E0', done: '#E6F4EA' };
             const textColors: Record<string, string> = { todo: '#1558B0', doing: '#B06000', done: '#137333' };
+
             return (
               <div key={col.id} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                background: bgColors[col.id], borderRadius: 20,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: bgColors[col.id],
+                borderRadius: 20,
                 padding: '4px 12px',
               }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: colors[col.id] }} />
+                <div style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: colors[col.id],
+                }} />
                 <span style={{ fontSize: 12, fontWeight: 500, color: textColors[col.id] }}>
                   {col.title} · {count}
                 </span>
@@ -171,7 +260,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main content */}
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px' }}>
         <CreateItemForm
           characters={characters}
@@ -184,7 +272,7 @@ export default function App() {
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: 16,
         }}>
-          {COLUMNS.map(col => (
+          {COLUMNS.map((col) => (
             <div
               key={col.id}
               onDragOver={(e) => handleDragOver(e, col.id)}
@@ -197,6 +285,7 @@ export default function App() {
                 items={board[col.id]}
                 onDelete={handleDeleteItem}
                 onDragStart={setDraggedItem}
+                onDropOnCard={handleDropOnCard}
                 isDragOver={dragOverColumn === col.id}
               />
             </div>
