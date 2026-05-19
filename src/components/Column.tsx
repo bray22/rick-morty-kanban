@@ -92,34 +92,30 @@ export function Column({
       </div>
 
       {/* Cards */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {items.length === 0 ? (
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px dashed #DADCE0',
-            borderRadius: 12,
-            padding: '32px 16px',
-            color: '#9AA0A6',
-            fontSize: 13,
-            textAlign: 'center',
-            minHeight: 120,
-          }}>
-            Drop items here
-          </div>
-        ) : (
-          items.map((item) => (
-           <Card
-            key={item.id}
-            item={item}
-            onDelete={onDelete}
-            onDragStart={(item) => onDragStart({ item, fromColumn: id })}
-            onDropOnCard={(targetItemId) => onDropOnCard(id, targetItemId)}
-          />
-          ))
-        )}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        border: `2px dashed ${isDragOver ? cfg.accent : '#DADCE0'}`,
+        background: isDragOver ? cfg.chipBg : '#FFFFFF',
+        borderRadius: 12,
+        padding: '32px 16px',
+        color: isDragOver ? cfg.chipColor : '#9AA0A6',
+        fontSize: 13,
+        textAlign: 'center',
+        minHeight: 140,
+        transition: 'all 0.15s ease',
+      }}>
+        <div style={{ fontSize: 24 }}>{cfg.icon}</div>
+        <strong style={{ fontSize: 14 }}>
+          {isDragOver ? `Drop in ${title}` : `No cards in ${title}`}
+        </strong>
+        <span style={{ fontSize: 12 }}>
+          {isDragOver ? 'Release to move this card here' : 'Drag a card here or create a new task'}
+        </span>
       </div>
     </div>
   );

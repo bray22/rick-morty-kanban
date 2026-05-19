@@ -49,6 +49,7 @@ npm run dev
 2. **Drag Items**: Click and drag items between columns
 3. **Complete Tasks**: Drag items to the "Done" column to trigger confetti animation
 4. **Delete Tasks**: Click the delete button on any task card
+5. **Retry on Load Failure**: If the character API request fails, use the reset button on the error screen to retry loading data
 
 ## Project Structure
 
@@ -73,6 +74,7 @@ src/
 
 ## Notes
 
-- The app stores state in memory only (no persistence)
+- The app persists board state to `localStorage`, so tasks survive page refreshes
 - Characters are fetched on app load from the public Rick and Morty API
+- If the API load fails, a reset button is shown so you can retry
 - Uses HTML5 native drag-and-drop (not a library like react-beautiful-dnd)

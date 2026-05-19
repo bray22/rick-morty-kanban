@@ -18,9 +18,23 @@ const COLUMNS: { id: ColumnId; title: string }[] = [
   { id: 'done', title: 'Done' },
 ];
 
+// Local storage key for persisting board state
+const STORAGE_KEY = 'rick-morty-kanban-board';
+
 export default function App() {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [board, setBoard] = useState<BoardState>({ todo: [], doing: [], done: [] });
+  const [board, setBoard] = useState<BoardState>(() => {
+  const savedBoard = localStorage.getItem(STORAGE_KEY);
+  if (!savedBoard) {
+    return { todo: [], doing: [], done: [] };
+  }
+
+  try {
+    return JSON.parse(savedBoard) as BoardState;
+  } catch {
+    return { todo: [], doing: [], done: [] };
+  }
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<{ item: KanbanItem; fromColumn: ColumnId } | null>(null);
@@ -33,6 +47,13 @@ export default function App() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
+
+  // set up effect to persist board state to local storage 
+  // whenever it changes
+  
+  useEffect(() => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(board));
+  }, [board]);
 
   const handleCreateItem = (title: string, characterId: string) => {
     const character = characters.find((c) => c.id === characterId);
@@ -130,6 +151,19 @@ export default function App() {
     setDragOverColumn(null);
   };
 
+  const handleReset = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setBoard({ todo: [], doing: [], done: [] });
+    setCharacters([]);
+    setError(null);
+    setLoading(true);
+
+    fetchCharacters()
+      .then(setCharacters)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  };
+
   const totalItems = board.todo.length + board.doing.length + board.done.length;
 
   if (loading) {
@@ -176,7 +210,24 @@ export default function App() {
           maxWidth: 400,
         }}>
           <p style={{ fontWeight: 600, color: '#D93025', margin: '0 0 8px' }}>Failed to load</p>
-          <p style={{ color: '#5F6368', fontSize: 14, margin: 0 }}>{error}</p>
+          <p style={{ color: '#5F6368', fontSize: 14, margin: '0 0 16px' }}>{error}</p>
+          <button
+            type="button"
+            onClick={handleReset}
+            style={{
+              width: '100%',
+              padding: '10px 16px',
+              borderRadius: 8,
+              border: 'none',
+              background: '#1A73E8',
+              color: '#fff',
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Reset and try again
+          </button>
         </div>
       </div>
     );
