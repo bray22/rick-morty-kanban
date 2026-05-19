@@ -108,13 +108,19 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100">
       {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Rick & Morty Kanban</h1>
-          <p className="text-gray-600">Organize your tasks with your favorite characters</p>
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="mb-10 rounded-[2rem] border border-white/10 bg-slate-950/75 shadow-[0_60px_120px_-60px_rgba(15,23,42,0.9)] backdrop-blur-xl p-8">
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-300/10 px-4 py-2 text-sm text-emerald-200 mb-4">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-300 animate-pulse"></span>
+            Premium workflow
+          </div>
+          <h1 className="text-5xl font-semibold tracking-tight text-white mb-3">Rick & Morty Kanban</h1>
+          <p className="max-w-2xl text-slate-300 leading-7">
+            Organize your tasks with character-powered productivity, elegant motion, and a refined board experience.
+          </p>
         </div>
 
         <CreateItemForm
@@ -123,7 +129,7 @@ export default function App() {
           isLoading={false}
         />
 
-        <div className="flex gap-6">
+        <div className="grid gap-6 lg:grid-cols-3">
           <div
             onDragOver={handleDragOver}
             onDrop={() => handleDrop('todo')}
