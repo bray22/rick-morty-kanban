@@ -28,7 +28,7 @@ describe('Column Component', () => {
       />
     )
 
-    expect(screen.getByText('Drop items here')).toBeInTheDocument()
+    expect(screen.getByText('Drag a card here or create a new task')).toBeInTheDocument()
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
@@ -60,7 +60,7 @@ describe('Column Component', () => {
     )
 
     expect(screen.getByText('Done')).toBeInTheDocument()
-    expect(screen.getByText('●')).toBeInTheDocument()
+    expect(screen.getByLabelText('Done column icon')).toBeInTheDocument()
   })
 
   it('should render To Do column title and icon', () => {
@@ -75,6 +75,6 @@ describe('Column Component', () => {
     )
 
     expect(screen.getByText('To Do')).toBeInTheDocument()
-    expect(screen.getByText('○')).toBeInTheDocument()
+    expect(screen.getByLabelText('To Do column icon')).toBeInTheDocument()
   })
 })
