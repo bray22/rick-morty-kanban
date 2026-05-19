@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import type { KanbanItem } from '../types';
 
-// interface CardProps {
-//   item: KanbanItem;
-//   onDelete: (itemId: string) => void;
-//   onDragStart: (item: KanbanItem) => void;
-// }
 interface CardProps {
   item: KanbanItem
   onDelete: (itemId: string) => void
