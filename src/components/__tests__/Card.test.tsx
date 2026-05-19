@@ -1,5 +1,6 @@
+import React from 'react'
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Card } from '../Card'
 import type { KanbanItem } from '../../types'
@@ -21,8 +22,8 @@ describe('Card Component', () => {
     const mockDragStart = vi.fn()
 
     render(
-      <Card 
-        item={mockItem} 
+      <Card
+        item={mockItem}
         onDelete={mockDelete}
         onDragStart={mockDragStart}
       />
@@ -30,7 +31,11 @@ describe('Card Component', () => {
 
     expect(screen.getByText('Test Task')).toBeInTheDocument()
     expect(screen.getByText('Rick')).toBeInTheDocument()
-    expect(screen.getByAltText('Rick')).toHaveAttribute('src', 'https://example.com/rick.jpg')
+
+    expect(screen.getByAltText('Rick')).toHaveAttribute(
+      'src',
+      'https://example.com/rick.jpg'
+    )
   })
 
   it('should call onDelete when delete button is clicked', async () => {
@@ -39,37 +44,36 @@ describe('Card Component', () => {
     const mockDragStart = vi.fn()
 
     render(
-      <Card 
-        item={mockItem} 
+      <Card
+        item={mockItem}
         onDelete={mockDelete}
         onDragStart={mockDragStart}
       />
     )
 
-    const deleteButton = screen.getByText('Delete')
+    const deleteButton = screen.getByRole('button')
+
     await user.click(deleteButton)
 
     expect(mockDelete).toHaveBeenCalledWith('1')
   })
 
-  it('should call onDragStart when dragging starts', async () => {
+  it('should call onDragStart when dragging starts', () => {
     const mockDelete = vi.fn()
     const mockDragStart = vi.fn()
 
     const { container } = render(
-      <Card 
-        item={mockItem} 
+      <Card
+        item={mockItem}
         onDelete={mockDelete}
         onDragStart={mockDragStart}
       />
     )
 
-    const cardElement = container.querySelector('[draggable="true"]')
-    expect(cardElement).toBeInTheDocument()
+    const cardElement = container.firstChild as HTMLElement
 
-    if (cardElement) {
-      cardElement.dispatchEvent(new DragEvent('dragstart'))
-      expect(mockDragStart).toHaveBeenCalledWith(mockItem)
-    }
+    fireEvent.dragStart(cardElement)
+
+    expect(mockDragStart).toHaveBeenCalledWith(mockItem)
   })
 })

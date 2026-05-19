@@ -10,30 +10,26 @@ describe('rickAndMortyAPI', () => {
     const mockData = {
       data: {
         characters: {
-          edges: [
+          results: [
             {
-              node: {
-                id: '1',
-                name: 'Rick',
-                image: 'https://example.com/rick.jpg',
-              },
+              id: '1',
+              name: 'Rick',
+              image: 'https://example.com/rick.jpg',
             },
             {
-              node: {
-                id: '2',
-                name: 'Morty',
-                image: 'https://example.com/morty.jpg',
-              },
+              id: '2',
+              name: 'Morty',
+              image: 'https://example.com/morty.jpg',
             },
           ],
         },
       },
     }
 
-    global.fetch = vi.fn().mockResolvedValueOnce({
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
       ok: true,
       json: async () => mockData,
-    })
+    } as Response)
 
     const characters = await fetchCharacters()
 
@@ -47,26 +43,26 @@ describe('rickAndMortyAPI', () => {
       errors: [{ message: 'API Error' }],
     }
 
-    global.fetch = vi.fn().mockResolvedValueOnce({
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
       ok: true,
       json: async () => mockError,
-    })
+    } as Response)
 
     await expect(fetchCharacters()).rejects.toThrow('API Error')
   })
 
   it('should handle network errors', async () => {
-    global.fetch = vi.fn().mockRejectedValueOnce(new Error('Network error'))
+    globalThis.fetch = vi.fn().mockRejectedValueOnce(new Error('Network error'))
 
     await expect(fetchCharacters()).rejects.toThrow('Network error')
   })
 
   it('should handle non-ok response status', async () => {
-    global.fetch = vi.fn().mockResolvedValueOnce({
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
       ok: false,
       status: 500,
-    })
+    } as Response)
 
-    await expect(fetchCharacters()).rejects.toThrow('Failed to fetch characters')
+    await expect(fetchCharacters()).rejects.toThrow('HTTP error: 500')
   })
 })

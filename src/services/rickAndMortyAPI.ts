@@ -23,11 +23,12 @@ export async function fetchCharacters(): Promise<Character[]> {
     body: JSON.stringify({ query }),
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
     throw new Error(`HTTP error: ${response.status}`);
   }
+  const data = await response.json();
+
+ 
 
   if (data.errors) {
     throw new Error(data.errors[0].message);

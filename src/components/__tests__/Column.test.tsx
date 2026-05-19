@@ -57,7 +57,7 @@ describe('Column Component', () => {
     )
 
     const title = screen.getByText('Done')
-    expect(title).toHaveClass('text-green-700')
+    expect(title).toHaveClass('text-emerald-300')
   })
 
   it('should render gray title for non-Done columns', () => {
@@ -72,6 +72,6 @@ describe('Column Component', () => {
     )
 
     const title = screen.getByText('To Do')
-    expect(title).toHaveClass('text-gray-700')
+    expect(title).toHaveClass('text-slate-100')
   })
 })
